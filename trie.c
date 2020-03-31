@@ -25,7 +25,7 @@ int trie_insert(struct trie **trie, const void *key, size_t keylen, void *data)
       // Take 1 byte prefix of the key.  That will be our index into
       // the subtries.
       //
-      int idx = *key_bytes++;
+      int idx = *(key_bytes++);
       --keylen;
 
       // Make sure structure is allocated
