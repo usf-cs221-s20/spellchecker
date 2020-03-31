@@ -3,12 +3,19 @@
 
 #include "trie.h"
 
+
 int main(int argc, char **argv)
 {
    struct trie *t = NULL;
-   char buff[256] = {0};
+   char buff[1048576] = {0};
 
    FILE* dictionary = fopen("/usr/share/dict/words", "r");
+
+   if(!dictionary)
+   {
+      perror("failed"); //fix for more description
+      return -1;
+   }
    
    while (fgets(buff, sizeof buff, dictionary))
    {
@@ -16,7 +23,7 @@ int main(int argc, char **argv)
       
    }
 
-   for (int i = 0; i < argc; i++)
+   for (int i = 1; i < argc; i++)
    {
       FILE *f = fopen(argv[i], "r");
 
@@ -26,10 +33,28 @@ int main(int argc, char **argv)
       }
       else
       {
-         int r;
-         while((r = fread(buff, 1, sizeof(buff), f)))
+         
+         while (fgets (buff, sizeof(buff), f))
+         {
+            const char *current = buff;
+            const char *p;
+            const char *stop = " .,!?\t\r\n";
+            
+            while ((p = strpbrk(current, stop))) {
+       
+               //lookup letters in buff from current to the end of strpbrk()
+               if (trie_lookup(t, current,  p - current) == NULL) { 
 
-            trie_lookup(t, buff,  strlen(buff) - 1);
+                  while (current != p) { //print out word if it is not in dictionary
+                     printf("%c", *current);
+                     current++;
+                  }
+               }
+               printf("\n");
+                while (strchr(stop, *current) != NULL) {
+                  current++;
+               }
+            }
          }
       }
    }
