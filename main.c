@@ -47,19 +47,17 @@ int main(int argc, char **argv)
             size_t len = strlen(buff);
             buff[len] = '\n';
             buff[len + 1] = 0; //always adds null char to end of file in order to include all
-
+            for(int i = 0; buff[i]; i++){
+               if (isupper(buff[i]) > 0){
+               buff[i] = tolower(buff[i]);
+               }
+            }
             char *current = buff;
             char *p;
             const char *stop = " .,!?\t\r\n";
             
             
             while ((p = strpbrk(current, stop))) {
-
-               for(int i = *current; i < *p; i++){
-                  if (isupper(buff[i]) > 0){
-                  buff[i] = tolower(buff[i]);
-                  }
-               }
        
                //lookup letters in buff from current to the end of strpbrk()
                if (trie_lookup(t, current,  p - current) == NULL) { 
