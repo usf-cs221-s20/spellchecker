@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "trie.h"
 
@@ -19,6 +20,13 @@ int main(int argc, char **argv)
    
    while (fgets(buff, sizeof buff, dictionary))
    {
+      for(int i = 0; buff[i]; i++){
+         if (isupper(buff[i]) > 0){
+          buff[i] = tolower(buff[i]);
+         }
+      }
+   
+
       trie_insert(&t, buff, strlen(buff) - 1, (void*) 1);
       
    }
@@ -36,11 +44,22 @@ int main(int argc, char **argv)
          
          while (fgets (buff, sizeof(buff), f))
          {
-            const char *current = buff;
-            const char *p;
+            size_t len = strlen(buff);
+            buff[len] = '\n';
+            buff[len + 1] = 0; //always adds null char to end of file in order to include all
+
+            char *current = buff;
+            char *p;
             const char *stop = " .,!?\t\r\n";
             
+            
             while ((p = strpbrk(current, stop))) {
+
+               for(int i = *current; i < *p; i++){
+                  if (isupper(buff[i]) > 0){
+                  buff[i] = tolower(buff[i]);
+                  }
+               }
        
                //lookup letters in buff from current to the end of strpbrk()
                if (trie_lookup(t, current,  p - current) == NULL) { 
@@ -50,6 +69,7 @@ int main(int argc, char **argv)
                      current++;
                   }
                }
+               current = p;
                printf("\n");
                 while (strchr(stop, *current) != NULL) {
                   current++;
@@ -58,20 +78,7 @@ int main(int argc, char **argv)
          }
       }
    }
-
-
-
-
-
-   // TODO: place your project code here.
-   // example of usage of trie data structure follows
-
-   // if (trie_insert(&t, "hello", 5, "hi guys"))
-   //    fprintf(stderr, "insert failed\n"); 
-
-   // if (trie_lookup(t, "hello", 5))
-   //    printf("hello is in trie\n");
-
+  
    trie_free(&t);
    return 0;
 }
