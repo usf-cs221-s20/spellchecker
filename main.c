@@ -58,7 +58,7 @@ int main(int argc, char **argv)
             
             
             while ((p = strpbrk(current, stop))) {
-       
+
                //lookup letters in buff from current to the end of strpbrk()
                if (trie_lookup(t, current,  p - current) == NULL) { 
 
@@ -66,10 +66,12 @@ int main(int argc, char **argv)
                      printf("%c", *current);
                      current++;
                   }
+                  printf("\n");
                }
+
                current = p;
-               printf("\n");
-                while (strchr(stop, *current) != NULL) {
+
+               while (strchr(stop, *current) != NULL) {
                   current++;
                }
             }
